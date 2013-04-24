@@ -20,7 +20,7 @@
   }
 
   #message_headers dt {
-    width: 62px;
+    width: 80px;
     padding: 1px;
     float: left;
     text-align: right;
@@ -29,7 +29,7 @@
   }
 
   #message_headers dd {
-    margin-left: 72px;
+    margin-left: 90px;
     padding: 1px;
   }
 
@@ -49,6 +49,11 @@
 </style>
 <div id="message_headers">
   <dl>
+    <% if mail.respond_to?(:smtp_envelope_from) && mail.from != mail.smtp_envelope_from %>
+      <dt>SMTP-From:</dt>
+      <dd><%= mail.smtp_envelope_from %></dd>
+    <% end %>
+
     <dt>From:</dt>
     <dd><%= mail.from %></dd>
 
@@ -62,6 +67,11 @@
 
     <dt>Date:</dt>
     <dd><%= Time.now.strftime("%b %e, %Y %I:%M:%S %p %Z") %></dd>
+
+    <% if mail.respond_to?(:smtp_envelope_to) && mail.to != mail.smtp_envelope_to %>
+      <dt>SMTP-To:</dt>
+      <dd><%= mail.smtp_envelope_to %></dd>
+    <% end %>
 
     <dt>To:</dt>
     <dd><%= mail.to %></dd>

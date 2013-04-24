@@ -46,7 +46,7 @@ class MailView
 
   protected
     def actions
-      public_methods(false).map(&:to_s) - ['call']
+      public_methods(false).map(&:to_s).sort - ['call']
     end
 
     def email_template
@@ -83,7 +83,11 @@ class MailView
 
       if mail.multipart?
         content_type = Rack::Mime.mime_type(format)
-        body_part = mail.parts.find { |part| part.content_type.match(content_type) } || mail.parts.first
+        body_part = if mail.respond_to?(:all_parts)
+                      mail.all_parts.find { |part| part.content_type.match(content_type) } || mail.parts.first
+                    else
+                      mail.parts.find { |part| part.content_type.match(content_type) } || mail.parts.first
+                    end
       end
 
       email_template.render(Object.new, :name => name, :mail => mail, :body_part => body_part)
